@@ -97,7 +97,7 @@ public class App {
 					tabla_numeros.update();
 					progress_llamadas.setMaximum(numeros.size());
 					progress_llamadas.setVisible(true);
-					HttpController marcarhttp = new HttpController();
+					final HttpController marcarhttp = new HttpController();
 					Configuracion c = new Configuracion();
 					final String host = c.leer().getProperty("host", "");
 					marcarhttp.set_host(host);
@@ -109,30 +109,24 @@ public class App {
 							resp = marcarhttp.call_encuesta(n.get_numero());
 							progress_llamadas
 									.setState(EstadoBarraP.BAR_ESTADO_NORMAL);
-							// ///Check linea activa
-							Thread checkl = new Thread() {
-								public void run() {
-									try {
-										HttpController marcarhttp = new HttpController();
-										marcarhttp.set_host(host);
-										resp = marcarhttp.check_linea();
-									} catch (IOException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-									if (resp.contains("AGI(encuestam.php)")) {
-										try {
-											Thread.sleep(5000);
-										} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
-										this.run();
-									}
-								}
-							};
-							checkl.run();
-							// ////////////////////
+							/*
+							 * Check linea activa new Thread() { public void
+							 * run() { try { HttpController marcarhttp = new
+							 * HttpController(); marcarhttp.set_host(host); resp
+							 * = marcarhttp.check_linea(); } catch (IOException
+							 * e) { // TODO Auto-generated catch block
+							 * e.printStackTrace(); } //if
+							 * (resp.contains("AGI(encuesta.php)")) {}
+							 * display.getDefault().asyncExec(new Runnable() {
+							 * public void run() { Mensaje m= new Mensaje();
+							 * m.info(resp, ""); } });
+							 * 
+							 * } }.start();
+							 
+							do{
+							Thread.sleep(5000);
+							resp = marcarhttp.check_linea();
+							}while(resp.contains("AGI(encuesta.php)"));*/
 							tabla_numeros.getItem(l - 1).setText(1,
 									"Finalizada");
 							tabla_numeros.update();
@@ -145,7 +139,7 @@ public class App {
 							tabla_numeros.update();
 							// e1.printStackTrace();
 						}
-						progress_llamadas.setSelection(l);
+						    	progress_llamadas.setSelection(l);
 						l++;
 					}
 
@@ -160,6 +154,7 @@ public class App {
 					progress_llamadas.setVisible(false);
 				}
 			}
+
 		});
 		btncall.setBounds(428, 381, 88, 53);
 		btncall.setText("Llamar");
@@ -277,4 +272,5 @@ public class App {
 		lbl_config.setBounds(428, 10, 88, 80);
 		lbl_config.setCursor(SWTResourceManager.getCursor(SWT.CURSOR_HAND));
 	}
+	
 }
